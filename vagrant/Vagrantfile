@@ -1,7 +1,6 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-# Custom installer to ensure proper installation of kernel headers for VBOX Guest Additions
 class KernelUpdateInstaller < VagrantVbguest::Installers::RedHat
   def install(opts=nil, &block)
     communicate.sudo('yum -y update kernel', opts, &block)
@@ -10,17 +9,10 @@ class KernelUpdateInstaller < VagrantVbguest::Installers::RedHat
 end
 
 Vagrant.configure("2") do |config|
-  # The most common configuration options are documented and commented below.
-  # For a complete reference, please see the online documentation at
-  # https://docs.vagrantup.com.
 
   config.vm.box = "centos/7"
+  # Custom installer to ensure proper installation of kernel headers for VBOX Guest Additions
   config.vbguest.installer = KernelUpdateInstaller
-
-  # Disable automatic box update checking. If you disable this, then
-  # boxes will only be checked for updates when the user runs
-  # `vagrant box outdated`. This is not recommended.
-  # config.vm.box_check_update = false
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine and only allow access
@@ -33,17 +25,11 @@ Vagrant.configure("2") do |config|
   # argument is a set of non-required options.
   config.vm.synced_folder "./../docker", "/opt/docker"
 
-  # Provider-specific configuration so you can fine-tune various
-  # backing providers for Vagrant. These expose provider-specific options.
+  # Provider-specific configuration tofine-tune various backing providers for Vagrant. These expose provider-specific options.
   config.vm.provider "virtualbox" do |vb|
     vb.memory = "1024"
   end
 
-  # Enable provisioning with a shell script. Additional provisioners such as
-  # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
-  # documentation for more information about their specific syntax and use.
-  # config.vm.provision "shell", inline: <<-SHELL
-  #   apt-get update
-  #   apt-get install -y apache2
-  # SHELL
+  # Enable provisioning with a shell script.
+  config.vm.provision :shell, path: "./provision/docker-provision.sh"
 end
