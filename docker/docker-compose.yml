@@ -1,1 +1,27 @@
-# 
+version: '3'
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: "mongodb"
+    restart: always
+    ports:
+      - 27017:27017
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:27017"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+  admin-mongo:
+    image: mrvautin/adminmongo
+    restart: "always"
+    links:
+      - mongodb
+    environment:
+      - HOST=0.0.0.0
+      - PORT=1234
+      - CONN_NAME=spurtti
+      - DB_HOST=mongodb
+      - DB_PORT=27017
+    ports:
+      - 1234:1234
